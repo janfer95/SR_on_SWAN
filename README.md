@@ -6,3 +6,5 @@ Code repository for the workflow presented in the article "A neural network supe
 
 It contains the SWAN script files that were used to produce the low- and high-resolution results. The pre-processing of the data and the training
 of the neural network are done with Python and are saved as Jupyter Notebooks. 
+
+Please contact jannik.kuhn@univ-pau.fr for queries and further material. 

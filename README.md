@@ -12,4 +12,6 @@ Some example reconstructions distributed over the whole year of test data are gi
 The Run\_Training.py is a simple python script that runs Train\_Model.py with the chosen parameters. The four different network architectures / 
 modelling approaches can be found in Models.py. 
 
-Please contact jannik.kuhn@univ-pau.fr for queries and further material. 
+Please contact jannik.kuhn@univ-pau.fr for queries and further material.
+
+![HR SWAN Reconstruction by a Super-Resolution Neural Network](./ExampleImages/ExampleReconstruction.png)

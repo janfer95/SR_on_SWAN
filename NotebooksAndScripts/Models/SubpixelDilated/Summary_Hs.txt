@@ -1,0 +1,15 @@
+Date: 20220816
+Kernel: 16
+Pooling: DS_RAW
+Variable: Hs
+Train_Size: 0.8
+Shuffle: True
+Patience: 30
+Batch_Size: 32
+Time: 6713.4376928806305
+Random_State_Train: 940908
+Random_State_Test: 235213
+sample_start: 24
+sample_end: 8760
+min_val_loss: 0.00450985599309206
+Eval: 0.008651881478726864

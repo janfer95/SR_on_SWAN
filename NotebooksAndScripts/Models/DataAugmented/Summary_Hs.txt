@@ -1,4 +1,4 @@
-Date: 20220820
+Date: 20230530
 Kernel: 16
 Pooling: DS_RAW
 Variable: Hs
@@ -6,11 +6,10 @@ Train_Size: 0.8
 Shuffle: True
 Patience: 30
 Batch_Size: 32
-Time: 5090.686513662338
-Random_State_Train: 917793
-Random_State_Test: 164233
-sample_start: 24
+Time: 11684.226874113083
+Random_State_Train: 398689
+Random_State_Test: 793406
+sample_start: 26
 sample_end: 8760
-min_val_loss: 0.005031241569668055
-Eval: 0.008728548884391785
-Augmentation sample size: False
+min_val_loss: 0.00699887378141284
+Eval: 0.016400501132011414

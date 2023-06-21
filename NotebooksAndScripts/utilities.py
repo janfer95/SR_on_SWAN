@@ -2,10 +2,10 @@
 various other often-used functions to keep the
 training scripts and jupyter notebooks tidy."""
 import numpy as np
-import os
 import glob
 
 from datetime import date, timedelta
+from pathlib import Path
 
 
 # Utility Functions
@@ -13,11 +13,12 @@ def uniquify(paths):
     """If model name already exists, add a subscript."""
     paths_out = []
     for path in paths:
-        fname, ext = os.path.splitext(path)
+        path = Path(path)
         counter = 1
+        stem = path.stem
 
-        while os.path.exists(path):
-            path = "{}_{}{}".format(fname, counter, ext)
+        while path.is_file():
+            path = path.with_stem(stem + f"_{counter}")
             counter += 1
 
         paths_out.append(path)
@@ -60,9 +61,10 @@ def get_file_list(dr, var, dir_prefix="Models",
     """
     Get a list of summary files, given a model directory and a variable.
     """
-    fglob = os.path.join(dir_prefix, dr, file_prefix)
+    
+    fdir = Path(dir_prefix) / dr
 
-    return glob.glob(fglob.format(var))
+    return fdir.glob(file_prefix.format(var))
 
 
 def extract_time_and_eval(dr, var, **kwargs):
@@ -116,29 +118,27 @@ def write_summary(fsum, var, t0, random_state_train,
 
 def get_info_file_names(fdir, var):
     """Return the paths to the information files."""
-
+    fdir = Path(fdir)
+    
     # Check if Model Folder already exists, if not, create it
-    if not os.path.isdir(fdir):
-        os.makedirs(fdir)
+    if not fdir.exists():
+        fdir.mkdir(parents=True)
 
     # Get the current date for the model name
     today = date.today().strftime("%Y%m%d")
 
     # Define the model names
-    fmodel = "Model_Inp_{}_{}.hdf5"
-    fmodel = fmodel.format(var, today)
-    fmodel = os.path.join(fdir, fmodel)
+    fmodel = f"Model_Inp_{var}_{today}.hdf5"
+    fmodel = fdir / fmodel
 
-    fhist = "History_Inp_{}_{}.csv"
-    fhist = fhist.format(var, today)
-    fhist = os.path.join(fdir, fhist)
+    fhist = f"History_Inp_{var}_{today}.csv"
+    fhist = fdir / fhist
 
-    fsum = "Summary_Inp_{}_{}.txt"
-    fsum = fsum.format(var, today)
-    fsum = os.path.join(fdir, fsum)
+    fsum = f"Summary_Inp_{var}_{today}.txt"
+    fsum = fdir / fsum
 
     # Check if filename already exists and if it does uniquify it
-    if os.path.isfile(fmodel):
+    if fmodel.is_file():
         fmodel, fhist, fsum = uniquify([fmodel, fhist, fsum])
 
     return fmodel, fhist, fsum
@@ -162,49 +162,6 @@ def load_data(fnames, serial, var, grid=(10, 10), grid_out=(160, 160),
 
         # Load input data
         X_tot[i, :, :, 0] = np.load(fname_LR.format(s))
-
-    if var == "Dir" and convert:
-        X_tot = (X_tot - 255 + 360) % 360
-        y_tot = (y_tot - 255 + 360) % 360
-
-    return X_tot, y_tot
-
-
-def load_threshold_data(thresholds, fnames, serial, var,
-                        grid=(10, 10), grid_out=(160, 160), dim=1,
-                        convert=True):
-    """Load input and reference data, where the mean over
-    the reference is higher than a certain threshold. This
-    is useful for data augmentation of extreme values,
-    for example."""
-    fname_HR, fname_LR = fnames
-    n_serial = len(serial)
-    # Initialize input and labels arrays respectively
-    X_tot = np.zeros((n_serial, grid[0], grid[1], dim))
-    y_tot = np.zeros((n_serial, grid_out[0], grid_out[1], dim))
-
-    # Create a boolean array to later extract only extreme values
-    bool_arr = np.emptry(n_serial, dtype=bool)
-
-    print("Loading threshold data...")
-    # Iterate through all the datasets and save them in their arrays
-    for i, s in enumerate(serial):
-        # Load input data
-        data = np.load(fname_LR.format(s))
-
-        if np.nanmean(data) > thresholds[var]:
-            X_tot[i, :, :, 0] = data
-            bool_arr[i] = True
-        else:
-            bool_arr[i] = False
-            continue
-
-        # Load reference data
-        y_tot[i, :, :, 0] = np.load(fname_HR.format(s))
-
-    # Extract only the threshold data
-    X_tot = X_tot[bool_arr]
-    y_tot = y_tot[bool_arr]
 
     if var == "Dir" and convert:
         X_tot = (X_tot - 255 + 360) % 360

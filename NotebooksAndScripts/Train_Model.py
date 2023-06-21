@@ -13,6 +13,7 @@ import utilities as u
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from sklearn.model_selection import train_test_split
 from time import time
+from pathlib import Path
 
 
 # Ignore Tensorflow Warnings and other tensorflow options
@@ -57,23 +58,14 @@ batch_size = 32
 thresholds = {"Hs": 4, "Tm02": 12, "Dir": 330}
 
 # Prepare file locations for reference and input data
-fname_HR = './Data/HR/{}/BaskCoast_{}_{{}}.npy'
-fname_HR = fname_HR.format(var, var.upper())
-fname_LR = './Data/LR/{}/BaskCoast_{}_{{}}.npy'
-fname_LR = fname_LR.format(var, var.upper())
+fname_HR = f'Data/HR/{var}/BaskCoast_{var.upper()}_{{}}.npy'
+fname_LR = f'Data/LR/{var}/BaskCoast_{var.upper()}_{{}}.npy'
 
 fnames = [fname_HR, fname_LR]
 
 # Load training data
 X_tot, y_tot = u.load_data(fnames, serial, var)
 
-# Load thresholded pool data
-if model == "DataAugmented":
-    fname_pool = './Data/LR/AvgPool/{}/BaskCoast_{}_{{}}.npy'
-    fname_pool = fname_pool.format(upfactor, var, var.upper())
-    fnames_pool = [fname_HR, fname_pool]
-    X_pool, y_pool = u.load_threshold_data(thresholds, fnames_pool,
-                                           serial, var)
 
 # Create random integer to set a random state for train_test_split
 random_state_train, random_state_test = np.random.randint(1e6, size=2)
@@ -82,11 +74,6 @@ random_state_train, random_state_test = np.random.randint(1e6, size=2)
 X_train, X_valid, y_train, y_valid = train_test_split(
     X_tot, y_tot, train_size=train_size,
     random_state=random_state_train)
-
-if model == "DataAugmented":
-    # Concat the pool data to the training set
-    X_train = np.r_[X_train, X_pool]
-    y_train = np.r_[y_train, y_pool]
 
 # Extra shuffle data
 np.random.seed(random_state_train)
@@ -112,7 +99,7 @@ print("X_valid shape: ", X_valid.shape)
 print("Initializing Model")
 
 # Choose the right model
-if model == "Subpixel" or model == "DataAugmented":
+if model == "Subpixel":
     autoencoder = models.Subpixel(grid=(10, 10))
 elif model == "SubpixelDilated":
     autoencoder = models.SubpixelDilated(grid=(10, 10))
@@ -122,7 +109,7 @@ else:
 print(autoencoder.summary())
 
 # Define file output names
-fdir = "Models/{}".format(model)
+fdir = f"Models/{model}"
 fmodel, fhist, fsum = u.get_info_file_names(fdir, var)
 
 # Save only best models

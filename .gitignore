@@ -1,6 +1,7 @@
 .ipynb_checkpoints/
 __pycache__
 Data/*
-NotebooksAndScripts/Data/HR
-NotebooksAndScripts/Data/LR
+NotebooksAndScripts/Data/HR/*
+NotebooksAndScripts/Data/LR/*
+NotebooksAndScripts/Data/Spectrum/*
 NotebooksAndScripts/__pycache__

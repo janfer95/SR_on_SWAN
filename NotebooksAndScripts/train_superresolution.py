@@ -30,7 +30,7 @@ parser.add_argument("variable", metavar="v", type=str, nargs='?',
                     default="Hs", help="Which variable to use")
 args = parser.parse_args()
 
-model = "DscMs"
+model = "SuperResolution"
 
 # Setting for Training datasets
 var = args.variable

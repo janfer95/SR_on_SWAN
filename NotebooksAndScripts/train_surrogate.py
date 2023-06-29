@@ -76,8 +76,8 @@ X_max, X_min = np.nanmax(X_tot), np.nanmin(X_tot)
 bat_max, bat_min = np.nanmax(bat_tot), np.nanmin(bat_tot)
 
 # Save for later use
-np.save("Xmax_Xmin_2018_spectrum.npy", np.array([X_max, X_min]))
-np.save("bat_max_bat_min_2018_spectrum.npy", np.array([bat_max, bat_min]))
+np.save("Data/Xmax_Xmin_2018_spectrum.npy", np.array([X_max, X_min]))
+np.save("Data/bat_max_bat_min_2018_spectrum.npy", np.array([bat_max, bat_min]))
 
 # Normalize data
 X_tot = (X_tot - X_min) / (X_max - X_min)

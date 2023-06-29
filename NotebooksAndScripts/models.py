@@ -6,7 +6,7 @@ from keras.layers import (Input, Conv2D, Dense, Concatenate, MaxPooling2D,
 from keras.models import Model
 
 
-def DscMs(grid=(10, 10), upfactor=16, dim=1):
+def SuperResolution(grid=(10, 10), upfactor=16, dim=1):
     """Initialize the DSC/MS model."""
     input_img = Input(shape=(grid[0], grid[1], dim))
     input_img_up = UpSampling2D((upfactor, upfactor))(input_img)

@@ -1,0 +1,15 @@
+Date: 20220824
+Kernel: 16
+Pooling: DS_RAW
+Variable: Dir
+Train_Size: 0.8
+Shuffle: True
+Patience: 30
+Batch_Size: 32
+Time: 5906.6270434856415
+Random_State_Train: 265223
+Random_State_Test: 305858
+sample_start: 24
+sample_end: 8760
+min_val_loss: 0.18490532040596008
+Eval: 0.3296934962272644

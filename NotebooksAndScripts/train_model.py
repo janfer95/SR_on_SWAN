@@ -5,7 +5,6 @@ Fukami et al. 2019.
 """
 import os
 import argparse
-import models
 import numpy as np
 import tensorflow as tf
 import utilities as u
@@ -14,6 +13,8 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 from sklearn.model_selection import train_test_split
 from time import time
 from pathlib import Path
+
+from models import DscMs
 
 
 # Ignore Tensorflow Warnings and other tensorflow options
@@ -25,15 +26,13 @@ session = tf.compat.v1.Session(config=config)
 
 # Parse variable parameter, for easier training
 parser = argparse.ArgumentParser(description="Process parameters")
-parser.add_argument("model", metavar="m", type=str, nargs='?',
-                    default="Subpixel", help="Which model to train")
 parser.add_argument("variable", metavar="v", type=str, nargs='?',
                     default="Hs", help="Which variable to use")
 args = parser.parse_args()
 
+model = "DscMs"
 
 # Setting for Training datasets
-model = args.model
 var = args.variable
 upfactor = 16
 grid = (10, 10)
@@ -53,9 +52,6 @@ serial_test = np.arange(sample_start_test, sample_end_test+1, 1)
 train_size = 0.8
 patience = 30
 batch_size = 32
-
-# Thresholds for Data Augmentation
-thresholds = {"Hs": 4, "Tm02": 12, "Dir": 330}
 
 # Prepare file locations for reference and input data
 fname_HR = f'Data/HR/{var}/BaskCoast_{var.upper()}_{{}}.npy'
@@ -99,12 +95,7 @@ print("X_valid shape: ", X_valid.shape)
 print("Initializing Model")
 
 # Choose the right model
-if model == "Subpixel":
-    autoencoder = models.Subpixel(grid=(10, 10))
-elif model == "SubpixelDilated":
-    autoencoder = models.SubpixelDilated(grid=(10, 10))
-else:
-    autoencoder = models.OriginalFukami(grid=(10, 10))
+autoencoder = DscMs(grid=(10, 10))
 
 print(autoencoder.summary())
 

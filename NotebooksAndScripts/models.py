@@ -54,10 +54,10 @@ def SuperResolution(grid=(10, 10), upfactor=16, dim=1):
 
     x_final = Concatenate()([x4, x4m])
     x_final = Conv2D(dim, (3, 3), padding='same')(x_final)
-    autoencoder = Model(input_img, x_final)
-    autoencoder.compile(optimizer='adam', loss='mae')
+    model = Model(input_img, x_final)
+    model.compile(optimizer='adam', loss='mae')
 
-    return autoencoder
+    return model
 
 
 def Surrogate(grid=(160, 160), nfreq=32, ntheta=24, dim=1):
@@ -112,8 +112,39 @@ def Surrogate(grid=(160, 160), nfreq=32, ntheta=24, dim=1):
 
     x_final = Concatenate()([x4, x4m])
     x_final = Conv2D(dim, (3, 3), padding='same')(x_final)
-    autoencoder = Model([input_spec, input_bathy], x_final)
-    autoencoder.compile(optimizer='adam', loss='mae')
+    model = Model([input_spec, input_bathy], x_final)
+    model.compile(optimizer='adam', loss='mae')
 
-    return autoencoder
+    return model
+
+    
+def Fcnn(grid=(10, 10), upfactor=16, dim=1):
+    input_img = Input(shape=(grid[0], grid[1], dim))
+    
+    x = Flatten()(input_img)
+    
+    x = Dense(3000, activation="relu")(x)
+    x = Dense(10000, activation="relu")(x)
+    x = Dense(grid[0]*grid[1]*upfactor**2, activation=None)(x)
+    x_final = Reshape((grid[0]*upfactor, grid[1]*upfactor))
+    
+    model = Model(input_img, x_final)
+    model.compile(optimizer='adam', loss='mae')
+    
+    return model
+
+
+def Cnn(grid=(10, 10), upfactor=16, dim=1):
+    input_img = Input(shape=(grid[0], grid[1], dim))
+    input_img_up = UpSampling2D((upfactor, upfactor))(input_img)
+    
+    x = Conv2D(32, (3, 3), activation="relu", padding="same")(input_img_up)
+    x = Conv2D(32, (3, 3), activation="relu", padding="same")(x)
+    x = Conv2D(32, (3, 3), activation="relu", padding="same")(x)
+    x_final = Conv2D(dim, (3, 3), activation=None, padding="same")(x)
+    
+    model = Model(input_img, x_final)
+    model.compile(optimizer='adam', loss='mae')
+    
+    return model
 

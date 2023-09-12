@@ -112,9 +112,9 @@ print("Bat_train shape:", bat_train.shape)
 print("Initializing Model")
 
 # Choose the right model
-autoencoder = Surrogate(grid_out, nfreq, ntheta, dim)
+model = Surrogate(grid_out, nfreq, ntheta, dim)
 
-print(autoencoder.summary())
+print(model.summary())
 
 # Define file output names
 fdir = f"Models/{model}"
@@ -130,7 +130,7 @@ cb = [model_cb, early_cb]
 
 # Train Neural Network and measure how long it takes
 t0 = time()
-history = autoencoder.fit([X_train, bat_train], y_train, epochs=5000,
+history = model.fit([X_train, bat_train], y_train, epochs=5000,
                           batch_size=batch_size, verbose=1,
                           callbacks=cb,
                           validation_data=([X_valid, bat_valid], y_valid))
@@ -156,7 +156,7 @@ X_test = np.nan_to_num(X_test)
 y_test = np.nan_to_num(y_test)
 
 # Evaluate test data
-ev = autoencoder.evaluate([X_test, bat_test], y_test)
+ev = model.evaluate([X_test, bat_test], y_test)
 
 # Save Model History
 d = history.history

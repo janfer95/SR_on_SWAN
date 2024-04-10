@@ -14,7 +14,7 @@ from sklearn.model_selection import train_test_split
 from time import time
 from pathlib import Path
 
-from models import Surrogate
+from models import surrogate
 
 
 # Ignore Tensorflow Warnings and other tensorflow options
@@ -30,7 +30,6 @@ parser.add_argument("variable", metavar="v", type=str, nargs='?',
                     default="Hs", help="Which variable to use")
 args = parser.parse_args()
 
-model = "Surrogate"
 
 # Setting for Training datasets
 var = args.variable
@@ -39,6 +38,7 @@ ntheta = 24
 grid = (32, 24)
 grid_out = (160, 160)
 dim = 1
+model_folder_name = "Surrogate"
 
 # Beginning and end of the data set serial
 sample_start = 24
@@ -112,12 +112,12 @@ print("Bat_train shape:", bat_train.shape)
 print("Initializing Model")
 
 # Choose the right model
-model = Surrogate(grid_out, nfreq, ntheta, dim)
+model = surrogate(grid_out, nfreq, ntheta, dim)
 
 print(model.summary())
 
 # Define file output names
-fdir = f"Models/{model}"
+fdir = Path("Models") / model_folder_name
 fmodel, fhist, fsum = u.get_info_file_names(fdir, var)
 
 # Save only best models
@@ -131,9 +131,9 @@ cb = [model_cb, early_cb]
 # Train Neural Network and measure how long it takes
 t0 = time()
 history = model.fit([X_train, bat_train], y_train, epochs=5000,
-                          batch_size=batch_size, verbose=1,
-                          callbacks=cb,
-                          validation_data=([X_valid, bat_valid], y_valid))
+                    batch_size=batch_size, verbose=1,
+                    callbacks=cb,
+                    validation_data=([X_valid, bat_valid], y_valid))
 t0 = time()-t0
 
 # Free some resources for test data evaluation
@@ -161,11 +161,13 @@ ev = model.evaluate([X_test, bat_test], y_test)
 # Save Model History
 d = history.history
 header = "Loss, Val_Loss"
-np.savetxt(fhist, np.c_[d["loss"], d["val_loss"]], header=header,
-           delimiter=",")
+np.savetxt(
+    fhist, np.c_[d["loss"], d["val_loss"]], header=header, delimiter=","
+)
 
 # Get the best val_loss for the summary file
 min_val_loss = min(d["val_loss"])
 
-u.write_summary(fsum, var, t0, random_state_train,
-                random_state_test, min_val_loss, ev)
+u.write_summary(
+    fsum, var, t0, random_state_train, random_state_test, min_val_loss, ev
+)

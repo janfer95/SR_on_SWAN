@@ -71,6 +71,8 @@ def create_dategenerator(
         def daterange(start_date, end_date):
             for n in range(const * int((end_date - start_date).days)):
                 yield start_date + n * timedelta(minutes=time_step)
+    else:
+        raise ValueError("time_step_type must be 'hrs' or 'min'")
 
     return daterange
 

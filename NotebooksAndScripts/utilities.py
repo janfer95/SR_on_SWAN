@@ -381,7 +381,6 @@ def get_data_in_box(
     tuple[np.ndarray, np.ndarray]
         Coordinates and bathymetry data within the box
     """
-    # Define the conditions if coord is in box
     condition1 = coords[:, 0] > bl[0]
     condition2 = coords[:, 1] > bl[1]
     condition3 = coords[:, 0] < tr[0]

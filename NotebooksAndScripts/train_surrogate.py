@@ -1,7 +1,5 @@
-"""This is a script to train a neural network
-with an architecture based on the Downsampled-Skip
-Connection / Multi-Scale model introduced by
-Fukami et al. 2019.
+"""Script to train a surrogate adaptation of the Downsampled-Skip
+Connection / Multi-Scale model introduced by Fukami et al. 2019.
 """
 import os
 import argparse
